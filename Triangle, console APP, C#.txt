@@ -1,0 +1,474 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+
+namespace _1
+{
+    class Program
+    {
+        static void Main()
+        {
+            Triangle triangle = new Triangle();
+            Console.CursorVisible = false;
+            TreangleShowInfo info = new TreangleShowInfo();
+
+            info.resetCMD();
+            info.strColor("                 ", 5, 0);
+            info.strColor(" Треугольник ABC ", 5, 1);
+            info.strColor("                 ", 5, 2);
+
+            info.DrawTreangle();
+            info.DrawSymbols();
+
+            string[] str = { "Сторона A = ", "Сторона B = ", "  Угол AB = ", "Сторона С = " };
+            info.showMainMenuTriangel(triangle, str, 6);
+
+            triangle.sideC();
+            info.strColor(Convert.ToString(Math.Round(triangle.getC(), 1)), 18, 10, ConsoleColor.Black, ConsoleColor.White);
+
+            Thread.Sleep(700);
+
+            info.program(triangle);
+
+        }
+    }
+}
+public class Triangle
+{
+    protected double A, B, C, AB;
+    public Triangle(double A, double B, double C, double AB)
+    {
+        this.A = A;
+        this.B = B;
+        this.C = C;
+        this.AB = AB;
+    }
+    public Triangle()
+    {
+        A = 20;
+        B = 20;
+        C = 20;
+        AB = 60;
+    }
+    public void setA(double A) { this.A = A; }
+    public void setB(double B) { this.B = B; }
+    public void setC(double C) { this.C = C; }
+    public void setAB(double AB) { this.AB = AB; }
+    public double getA() { return A; }
+    public double getB() { return B; }
+    public double getC() { return C; }
+    public double getAB() { return AB; }
+    public void sideC() { C = Math.Sqrt(Math.Pow(A, 2) + Math.Pow(B, 2) - 2 * A * B * (Math.Cos(AB * 0.0174533))); }
+}
+class TreangleShowInfo : Triangle
+{
+    public void DrawPixel(int X, int Y, char symbol = '▲', ConsoleColor colorForeGround = ConsoleColor.Black, ConsoleColor colorBackGround = ConsoleColor.White)
+    {
+        Console.BackgroundColor = colorBackGround;
+        Console.ForegroundColor = colorForeGround;
+        Console.SetCursorPosition(X, Y);
+        Console.WriteLine(symbol);
+    }
+    public void DrawTreangle(int X = 38, int y = 3, int value = 10)
+    {
+        selecktColor(0);
+        int defaultY = y;
+        for (int x = X; x > (X - value); x--)
+        {
+            DrawPixel(x, y);
+            y++;
+        }
+        y = defaultY;
+        y++;
+        for (int x = X; x > (X - value); x--)
+        {
+            DrawPixel(x, y);
+            y++;
+        }
+        y = defaultY;
+        for (int x = X; x < (X + value); x++)
+        {
+            DrawPixel(x, y);
+            y++;
+        }
+        y = defaultY;
+        y++;
+        for (int x = X; x < (X + value); x++)
+        {
+            DrawPixel(x, y);
+            y++;
+        }
+        y--;
+        for (int x = (X - value); x <= (X + value); x++)
+        {
+            DrawPixel(x, y);
+        }
+        y--;
+        for (int x = (X - value + 1); x <= (X + value - 1); x++)
+        {
+            DrawPixel(x, y);
+        }
+    }
+    public void DrawSymbols(int x = 38, int y = 3, int value = 10)
+    {
+        selecktColor(0);
+        DrawPixel(x - value + 2, y + (value / 2), 'A');
+        DrawPixel(x + value - 2, y + (value / 2), 'B');
+        DrawPixel(x, y + value + 2, 'C');
+    }
+    public void strColor(string str, int x, int y, ConsoleColor colorForeGround = ConsoleColor.White, ConsoleColor colorBackGround = ConsoleColor.Black)
+    {
+        Console.SetCursorPosition(x, y);
+        Console.ForegroundColor = colorForeGround;
+        Console.BackgroundColor = colorBackGround;
+        Console.Write(str);
+        selecktColor(0);
+        Console.SetCursorPosition(0, 0);
+
+    }
+    public void DrawBoxes(int x, int X, int y, int Y, char symbol = ' ')
+    {
+        for (int i = x; i < X; i++)
+        {
+            for (int j = y; j < Y; j++)
+            {
+                DrawPixel(i, j, symbol, ConsoleColor.White, ConsoleColor.Black);
+            }
+        }
+    }
+    public void showMainMenuTriangel(Triangle triangle, string[] str, int x = 5, int y = 4, int value = 2, int polimorf = 0)//polimorf 0 = + vvod
+    {
+        int Y = y;
+        for (int i = 0; i < str.Length; i++, y += value)
+            strColor(str[i], x, y, ConsoleColor.Black, ConsoleColor.White);
+        y = Y;
+        for (int i = 0; i < str.Length; i++, y += value)
+        {
+            strColor(str[i], x, y, ConsoleColor.White, ConsoleColor.Black);
+            Console.SetCursorPosition(str[i].Length + x, y);
+            if (polimorf == 0)
+            {
+                switch (i)
+                {
+                    case 0:
+                        triangle.setA(Convert.ToDouble(Console.ReadLine()));
+                        break;
+                    case 1:
+                        triangle.setB(Convert.ToDouble(Console.ReadLine()));
+                        break;
+                    case 2:
+                        triangle.setAB(Convert.ToDouble(Console.ReadLine()));
+                        break;
+                }
+            }
+            else
+            {
+                switch (i)
+                {
+                    case 0:
+                        Console.WriteLine(triangle.getA());
+                        break;
+                    case 1:
+                        Console.WriteLine(triangle.getB());
+                        break;
+                    case 2:
+                        Console.WriteLine(triangle.getAB());
+                        break;
+                    case 3:
+                        Console.WriteLine(Math.Round(triangle.getC(), 1));
+                        break;
+                }
+            }
+            strColor(str[i], x, y, ConsoleColor.Black, ConsoleColor.White);
+        }
+    }
+    public void selecktColor(int i)
+    {
+        switch (i)
+        {
+            case 0:
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+                break;
+            case 1:
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.BackgroundColor = ConsoleColor.White;
+                break;
+        }
+    }
+    public void resetCMD(int x = 50, int y = 20)
+    {
+        Console.SetWindowSize(x, y);
+        selecktColor(0);
+        for (int i = 0; i < x; i++)
+        {
+            for (int j = 0; j < y; j++)
+            {
+                Console.SetCursorPosition(i, j);
+                Console.Write(" ");
+            }
+        }
+    }
+    public int selecktStr(string[] str, int x, int y, int value = 2, ConsoleColor colorForeGround = ConsoleColor.White, ConsoleColor colorBackGround = ConsoleColor.Black, int polimprf = 0)
+    {
+        int choiseEntr = 1;
+        ConsoleKey key = ConsoleKey.UpArrow;
+        while (true)
+        {
+            switch (key)
+            {
+                case ConsoleKey.DownArrow: choiseEntr++; break;
+                case ConsoleKey.UpArrow: choiseEntr--; break;
+                case ConsoleKey.Enter: return choiseEntr;
+            }
+            if (choiseEntr < 0) { choiseEntr = 0; }
+            if (choiseEntr >= str.Length) { choiseEntr = str.Length - 1; }
+            for (int i = 0, j = 0; i < str.Length; i++, j += value)
+            {
+                switch (polimprf)
+                {
+                    case 0:
+                        if (i == choiseEntr)
+                        {
+                            strColor(str[i], x, y + j, colorForeGround, colorBackGround);
+                        }
+                        else
+                        {
+                            strColor(str[i], x, y + j, colorBackGround, colorForeGround);
+                        }
+                        break;
+                    case 1:
+                        if (i == choiseEntr)
+                        {
+                            strColor(str[i], x, y + j, ConsoleColor.Black, ConsoleColor.White);
+                        }
+                        else
+                        {
+                            strColor("     ", x, y + j, colorBackGround, colorForeGround);
+                        }
+                        break;
+                }
+            }
+            key = Console.ReadKey().Key;
+        }
+    }
+    public void menuTriangleTransform(int choiseEntr)
+    {
+        if (choiseEntr == 0)
+        {
+            resetCMD();
+            Console.SetCursorPosition(23, 3);
+            strColor("МЕНЮ", 23, 10, ConsoleColor.White, ConsoleColor.Black);
+            Thread.Sleep(500);
+            resetCMD();
+            DrawBoxes(15, 35, 0, 20);
+            strColor("МЕНЮ", 23, 1, ConsoleColor.White, ConsoleColor.Black);
+            while (true)
+            {
+                string[] str = { "   SUM   ", "   UM    ", "  UNSUM  ", "   DEL   " };
+                selecktStr(str, 20, 5, 2, ConsoleColor.Black, ConsoleColor.White);
+            }
+        }
+        else if (choiseEntr == 1)
+        {
+            resetCMD();
+            Console.SetCursorPosition(23, 7);
+            Console.WriteLine("EXIT");
+            Console.ReadKey();
+            Console.SetCursorPosition(0, 0);
+        }
+    }
+    public void sumTriangle(Triangle triangle)
+    {
+        string value = selectValue();
+        meinMenu(triangle);
+        string[] str2 = { "+ " + value, "+ " + value, "+ " + value};
+        int seleckt = selecktStr(str2, 19 + Convert.ToString(Math.Round(triangle.getC(), 1)).Length, 4, polimprf: 1);
+        switch (seleckt)
+        {
+            case 0:
+                triangle.setA(triangle.getA() + Convert.ToDouble(value));
+                triangle.sideC();
+                meinMenu(triangle);
+                Thread.Sleep(200);
+                program(triangle);
+                break;
+            case 1:
+                triangle.setB(triangle.getB() + Convert.ToDouble(value));
+                triangle.sideC();
+                meinMenu(triangle);
+                Thread.Sleep(200);
+                program(triangle);
+                break;
+            case 2:
+                triangle.setAB(triangle.getAB() + Convert.ToDouble(value));
+                triangle.sideC();
+                meinMenu(triangle);
+                Thread.Sleep(200);
+                program(triangle);
+                break;
+        }
+    }
+    public void subTriangle(Triangle triangle)
+    {
+        string value = selectValue();
+        meinMenu(triangle);
+        string[] str2 = { "- " + value, "- " + value, "- " + value };
+        int seleckt = selecktStr(str2, 19 + Convert.ToString(Math.Round(triangle.getC(), 1)).Length, 4, polimprf: 1);
+        switch (seleckt)
+        {
+            case 0:
+                triangle.setA(triangle.getA() - Convert.ToDouble(value));
+                triangle.sideC();
+                meinMenu(triangle);
+                Thread.Sleep(200);
+                program(triangle);
+                break;
+            case 1:
+                triangle.setB(triangle.getB() - Convert.ToDouble(value));
+                triangle.sideC();
+                meinMenu(triangle);
+                Thread.Sleep(200);
+                program(triangle);
+                break;
+            case 2:
+                triangle.setAB(triangle.getAB() - Convert.ToDouble(value));
+                triangle.sideC();
+                meinMenu(triangle);
+                Thread.Sleep(200);
+                program(triangle);
+                break;
+        }
+    }
+    public void mulTriangle(Triangle triangle)
+    {
+        string value = selectValue();
+        meinMenu(triangle);
+        string[] str2 = { "* " + value, "* " + value, "* " + value};
+        int seleckt = selecktStr(str2, 19 + Convert.ToString(Math.Round(triangle.getC(), 1)).Length, 4, polimprf: 1);
+        switch (seleckt)
+        {
+            case 0:
+                triangle.setA(triangle.getA() * Convert.ToDouble(value));
+                triangle.sideC();
+                meinMenu(triangle);
+                Thread.Sleep(200);
+                program(triangle);
+                break;
+            case 1:
+                triangle.setB(triangle.getB() * Convert.ToDouble(value));
+                triangle.sideC();
+                meinMenu(triangle);
+                Thread.Sleep(200);
+                program(triangle);
+                break;
+            case 2:
+                triangle.setAB(triangle.getAB() * Convert.ToDouble(value));
+                triangle.sideC();
+                meinMenu(triangle);
+                Thread.Sleep(200);
+                program(triangle);
+                break;
+        }
+    }
+    public void divTriangle(Triangle triangle)
+    {
+        string value = selectValue();
+        meinMenu(triangle);
+        string[] str2 = { ": " + value, ": " + value, ": " + value };
+        int seleckt = selecktStr(str2, 19 + Convert.ToString(Math.Round(triangle.getC(), 1)).Length, 4, polimprf: 1);
+        switch (seleckt)
+        {
+            case 0:
+                triangle.setA(triangle.getA() / Convert.ToDouble(value));
+                triangle.sideC();
+                meinMenu(triangle);
+                Thread.Sleep(200);
+                program(triangle);
+                break;
+            case 1:
+                triangle.setB(triangle.getB() / Convert.ToDouble(value));
+                triangle.sideC();
+                meinMenu(triangle);
+                Thread.Sleep(200);
+                program(triangle);
+                break;
+            case 2:
+                triangle.setAB(triangle.getAB() / Convert.ToDouble(value));
+                triangle.sideC();
+                meinMenu(triangle);
+                Thread.Sleep(200);
+                program(triangle);
+                break;
+        }
+    }
+    public string selectValue()
+    {
+        resetCMD();
+        DrawBoxes(10, 40, 5, 13);
+        strColor("Введите число", 12, 7);
+        Console.SetCursorPosition(26, 7);
+        Console.BackgroundColor = ConsoleColor.Black;
+        Console.ForegroundColor = ConsoleColor.White;
+        string value = Console.ReadLine();
+        return value;
+    }
+    public void meinMenu(Triangle triangle)
+    {
+        resetCMD();
+        strColor("                 ", 5, 0);
+        strColor(" Треугольник ABC ", 5, 1);
+        strColor("                 ", 5, 2);
+        DrawTreangle();
+        DrawSymbols();
+        string[] str = { "Сторона A = ", "Сторона B = ", "  Угол AB = ", "Сторона С = " };//отдельный метод
+        strColor(Convert.ToString(triangle.getA()), x: 10, y: 10);
+        showMainMenuTriangel(triangle, str, 6, polimorf: 1);
+    }
+    public void program(Triangle triangle)
+    {
+        strColor("Долбоеб?", 100, 10);
+        strColor("↕", 4, 14, ConsoleColor.Black, ConsoleColor.White);
+        string[] str = { "MENU           ", "EXIT           " };
+        int seleckt = selecktStr(str, 6, 13);
+        switch (seleckt)
+        {
+            case 0:
+                resetCMD();
+                Console.SetCursorPosition(23, 3);
+                strColor("МЕНЮ", 23, 10);
+                Thread.Sleep(500);
+                resetCMD();
+                DrawBoxes(15, 35, 0, 20);
+                strColor("МЕНЮ", 23, 1);
+                while (true)
+                {
+                    string[] str2 = { "   SUM   ", "   SUB   ", "   MUL   ", "   DIV   " };
+                    int seleckt2 = selecktStr(str2, 20, 5, colorForeGround: ConsoleColor.Black, colorBackGround: ConsoleColor.White);
+                    switch (seleckt2)
+                    {
+                        case 0:
+                            sumTriangle(triangle);
+                            break;
+                        case 1:
+                            subTriangle(triangle);
+                            break;
+                        case 2:
+                            mulTriangle(triangle);
+                            break;
+                        case 3:
+                            divTriangle(triangle);
+                            break;
+                    }
+                }
+            case 1:
+                resetCMD();
+                Console.SetCursorPosition(23, 7);
+                Console.WriteLine("EXIT");
+                Thread.Sleep(200);
+                Console.SetCursorPosition(1, 1);
+                Environment.Exit(0);
+                break;
+        }
+    }
+}
